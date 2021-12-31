@@ -111,9 +111,13 @@
                     const name = recruit.name;
                     const university = recruit.university.school_name;
                     const degree = recruit.university.degree;
+                    //const degreeWithHighlights = buildHighlights(recruit.university.degree);
                     const gpa = Object.values(recruit.university.gpa);
                     const job = recruit.job;
+                    const notes = recruit.notes;
                     const score = Object.values(recruit.score).toString().slice(0, 5);
+                    const notesWithHighlights = buildHighlights(recruit.highlights);
+            
 
                     text += ` 
             <div class="column">
@@ -124,6 +128,7 @@
                     <h5><span class="color-gray">Degree:</span> ${degree}</h5>
                     <h5><span class="color-gray">GPA:</span> ${gpa}</h5>
                     <h5><span class="color-gray">Job:</span> ${job}</h5>
+                    <h5><span class="color-gray">Job:</span> ${notesWithHighlights}</h5>
                 </div>
             </div>
           `;
@@ -175,6 +180,23 @@
             search.value = degree;    // fill the searchbar with selected title
             autoDisplay.innerHTML = '';
             searchRecruits("degree");        // call the searchMovies function
+        }
+
+        function buildHighlights(highlights) {
+
+            let highlightString = "";
+
+            highlights.forEach(highlight => {
+
+                let texts = highlight.texts;
+                texts.forEach(text => {
+                    if (text.type === 'hit')
+                        highlightString += `<span style="color:red"> ${text.value} </span>`
+                    else highlightString += text.value
+                });
+            });
+
+            return highlightString;
         }
 
     </script>
