@@ -1,134 +1,121 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
-    />
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-      crossorigin="anonymous"
-    />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
     <style>
-      header {
-        background-color: transparent;
-        padding-top: 50px;
-        padding-bottom: 50px;
-        padding-left: 100px;
-        padding-right: 100px;
-      }
-      .fa-search {
-        color: #0ad05b;
-        padding-top: 14px;
-        font-size: 32px;
-        outline: none;
-      }
-      #box {
-        border: 2px solid black;
-        margin-left: 20px;
-        margin-top: 110px;
-      }
-      #results {
-        margin-left: 80px;
-        margin-right: 80px;
-      }
-      .form-control {
-        background: transparent;
-        color: black;
-        /*color: white !important;*/
-      }
-      .form-control:focus {
-        border-color: inherit;
-        -webkit-box-shadow: none;
-        box-shadow: none;
-        background: transparent;
-      }
+        header {
+            background-color: transparent;
+            padding-top: 50px;
+            padding-bottom: 50px;
+            padding-left: 100px;
+            padding-right: 100px;
+        }
+
+        .fa-search {
+            color: #0ad05b;
+            padding-top: 14px;
+            font-size: 32px;
+            outline: none;
+        }
+
+        #box {
+            border: 2px solid black;
+            margin-left: 20px;
+            margin-top: 110px;
+        }
+
+        #results {
+            margin-left: 80px;
+            margin-right: 80px;
+        }
+
+        .form-control {
+            background: transparent;
+            color: black;
+            /*color: white !important;*/
+        }
+
+        .form-control:focus {
+            border-color: inherit;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+            background: transparent;
+        }
     </style>
 
     <link rel="stylesheet" type="text/css" href="public/linkedinclone.css" />
 
     <script src="https://kit.fontawesome.com/e1f93e03c9.js"></script>
     <title>LinkedIn Clone</title>
-  </head>
+</head>
 
-  <body>
+<body>
     <header>
-      <div class="row">
-        <div class="col-3 view overlay">
-          <img src="public/logo.svg" />
-        </div>
-
-        <!-- Grid column -->
-
-        <div class="col-9">
-          <div class="row" id="box">
-            <div class="col-11">
-              <form onsubmit="searchRecruits()" action="javascript:">
-                <input
-                  type="text"
-                  onsubmit="searchRecruits()"
-                  autocomplete="off"
-                  id="myInput"
-                  class="form-control"
-                  placeholder="Atlas Search Recruits..."
-                  aria-label="Search"
-                  style="font-size: 2em; border: none;"
-                />
-              </form>
+        <div class="row">
+            <div class="col-3 view overlay">
+                <img src="public/logo.svg" />
             </div>
-            <div class="col-1" style="text-align: center;">
-              <span
-                ><i
-                  class="fa fa-search"
-                  aria-hidden="true"
-                  onclick="searchRecruits()"
-                ></i
-              ></span>
-            </div>
-          </div>
 
-          <div id="autocomplete"></div>
+            <!-- Grid column -->
+
+            <div class="col-9">
+                <div class="row" id="box">
+                    <div class="col-11">
+                        <form onsubmit="searchRecruits()" action="javascript:">
+                            <input type="text" onsubmit="searchRecruits()" autocomplete="off" id="myInput"
+                                class="form-control" placeholder="Atlas Search Recruits..." aria-label="Search"
+                                style="font-size: 2em; border: none;" />
+                        </form>
+                    </div>
+                    <div class="col-1" style="text-align: center;">
+                        <span><i class="fa fa-search" aria-hidden="true" onclick="searchRecruits()"></i></span>
+                    </div>
+                </div>
+
+                <div id="autocomplete"></div>
+            </div>
+            <br />
         </div>
-        <br />
-      </div>
     </header>
 
     <div class="grid-container" id="results">
-      Recruit Search Results
+        Recruit Search Results
     </div>
 
     <script>
-      let resultDisplay = document.getElementById("results");
-      let search = document.getElementById("myInput");
-      let autoDisplay = document.getElementById("autocomplete");
+        let resultDisplay = document.getElementById("results");
+        let search = document.getElementById("myInput");
+        let autoDisplay = document.getElementById("autocomplete");
 
-      async function searchRecruits() {
-        let text = "";
+        async function searchRecruits() {
+            let text = "";
 
-        let searchTerm = search.value;
-        const webhook =
-          "https://data.mongodb-api.com/app/recruiting-cgnjx/endpoint/search";
+            let searchTerm = search.value;
+            const webhook =
+                "https://data.mongodb-api.com/app/recruiting-cgnjx/endpoint/search";
 
-        const url = webhook + "?skill=" + searchTerm;
+            const url = webhook + "?skill=" + searchTerm;
 
-        try {
-          const recruits = await fetch(url).then((res) => res.json());
+            try {
+                const recruits = await fetch(url).then((res) => res.json());
 
-          console.log(recruits);
+                console.log(recruits);
 
-          recruits.forEach((recruit) => {
-            const name = recruit.name;
-            const university = recruit.university.school_name;
-            const degree = recruit.university.degree;
-            const gpa = Object.values(recruit.university.gpa);
-            const job = recruit.job;
-            const score = Object.values(recruit.score).toString().slice(0, 5);
+                recruits.forEach((recruit) => {
+                    const name = recruit.name;
+                    const university = recruit.university.school_name;
+                    const degree = recruit.university.degree;
+                    const gpa = Object.values(recruit.university.gpa);
+                    const job = recruit.job;
+                    const score = Object.values(recruit.score).toString().slice(0, 5);
 
-            text += ` 
+                    text += ` 
             <div class="column">
                 <div class="RecruitCard">
                     <b><h3>${name}</h3></b>
@@ -140,13 +127,57 @@
                 </div>
             </div>
           `;
-          });
+                });
 
-          resultDisplay.innerHTML = text;
-        } catch (error) {
-          console.log("Whoopsie!", error);
+                resultDisplay.innerHTML = text;
+            } catch (error) {
+                console.log("Whoopsie!", error);
+            }
         }
-      }
+
+        search.addEventListener('input', searchRecruitDegrees);
+
+        async function searchRecruitDegrees() {
+
+            resultDisplay.innerHTML = '';
+            autoDisplay.innerHTML = '';
+
+            const searchTerm = search.value;
+            const autocompleteURL = "https://data.mongodb-api.com/app/recruiting-cgnjx/endpoint/autocomplete";
+
+
+            if (searchTerm.length < 1) {
+                return;
+            }
+
+            try {
+                const degrees = await fetch(autocompleteURL + `?degree=${searchTerm}`)
+                    .then(res => res.json());
+
+                if (degrees.length > 0) {
+
+                    degrees.map(degree => {
+                        let div = document.createElement('div');
+                        div.innerHTML = `<h2>${degree.degree}</h2><hr>`;
+                        div.addEventListener("click", () => fillRecruitDegree(degree.degree));
+                        autoDisplay.appendChild(div);
+                    });
+                }
+
+            } catch (error) {
+                console.log("Whoopsie!", error);
+            }
+
+        }
+
+        function fillRecruitDegree(degree) {
+
+            search.value = degree;    // fill the searchbar with selected title
+            autoDisplay.innerHTML = '';
+            searchRecruits("degree");        // call the searchMovies function
+        }
+
     </script>
-  </body>
+</body>
+
 </html>
