@@ -8,50 +8,10 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
-    <style>
-        header {
-            background-color: transparent;
-            padding-top: 50px;
-            padding-bottom: 50px;
-            padding-left: 100px;
-            padding-right: 100px;
-        }
-
-        .fa-search {
-            color: #0ad05b;
-            padding-top: 14px;
-            font-size: 32px;
-            outline: none;
-        }
-
-        #box {
-            border: 2px solid black;
-            margin-left: 20px;
-            margin-top: 110px;
-        }
-
-        #results {
-            margin-left: 80px;
-            margin-right: 80px;
-        }
-
-        .form-control {
-            background: transparent;
-            color: black;
-            /*color: white !important;*/
-        }
-
-        .form-control:focus {
-            border-color: inherit;
-            -webkit-box-shadow: none;
-            box-shadow: none;
-            background: transparent;
-        }
-    </style>
-
     <link rel="stylesheet" type="text/css" href="public/linkedinclone.css" />
-
     <script src="https://kit.fontawesome.com/e1f93e03c9.js"></script>
+    <script src="index.js"></script>
+
     <title>LinkedIn Clone</title>
 </head>
 
@@ -67,10 +27,11 @@
             <div class="col-9">
                 <div class="row" id="box">
                     <div class="col-11">
-                        <form onsubmit="searchRecruits()" action="javascript:">
-                            <input type="text" onsubmit="searchRecruits()" autocomplete="off" id="myInput"
-                                class="form-control" placeholder="Atlas Search Recruits..." aria-label="Search"
-                                style="font-size: 2em; border: none;" />
+                        <form autocomplete="off" onsubmit="searchRecruits()" action="javascript:"
+                            onsubmit="searchRecruits()">
+
+                            <input type="text" id="myInput" class="form-control" placeholder="Search Recruits..."
+                                aria-label="Search" style="font-size: 2em; border: none;" />
                         </form>
                     </div>
                     <div class="col-1" style="text-align: center;">
@@ -78,7 +39,7 @@
                     </div>
                 </div>
 
-                <div id="autocomplete"></div>
+                <div id="autocomplete-list" class="autocomplete-items"></div>
             </div>
             <br />
         </div>
@@ -91,113 +52,9 @@
     <script>
         let resultDisplay = document.getElementById("results");
         let search = document.getElementById("myInput");
-        let autoDisplay = document.getElementById("autocomplete");
+        let autoDisplay = document.getElementById("autocomplete-list");
 
-        async function searchRecruits() {
-            let text = "";
-
-            let searchTerm = search.value;
-            const webhook =
-                "https://data.mongodb-api.com/app/recruiting-cgnjx/endpoint/search";
-
-            const url = webhook + "?skill=" + searchTerm;
-
-            try {
-                const recruits = await fetch(url).then((res) => res.json());
-
-                console.log(recruits);
-
-                recruits.forEach((recruit) => {
-                    const name = recruit.name;
-                    const university = recruit.university.school_name;
-                    const degree = recruit.university.degree;
-                    //const degreeWithHighlights = buildHighlights(recruit.university.degree);
-                    const gpa = Object.values(recruit.university.gpa);
-                    const job = recruit.job;
-                    const notes = recruit.notes;
-                    const score = Object.values(recruit.score).toString().slice(0, 5);
-                    const notesWithHighlights = buildHighlights(recruit.highlights);
-            
-
-                    text += ` 
-            <div class="column">
-                <div class="RecruitCard">
-                    <b><h3>${name}</h3></b>
-                    <h5><span class="color-gray">Score:</span> ${score} </h5>
-                    <h5><span class="color-gray">University:</span> ${university}</h5>
-                    <h5><span class="color-gray">Degree:</span> ${degree}</h5>
-                    <h5><span class="color-gray">GPA:</span> ${gpa}</h5>
-                    <h5><span class="color-gray">Job:</span> ${job}</h5>
-                    <h5><span class="color-gray">Job:</span> ${notesWithHighlights}</h5>
-                </div>
-            </div>
-          `;
-                });
-
-                resultDisplay.innerHTML = text;
-            } catch (error) {
-                console.log("Whoopsie!", error);
-            }
-        }
-
-        search.addEventListener('input', searchRecruitDegrees);
-
-        async function searchRecruitDegrees() {
-
-            resultDisplay.innerHTML = '';
-            autoDisplay.innerHTML = '';
-
-            const searchTerm = search.value;
-            const autocompleteURL = "https://data.mongodb-api.com/app/recruiting-cgnjx/endpoint/autocomplete";
-
-
-            if (searchTerm.length < 1) {
-                return;
-            }
-
-            try {
-                const degrees = await fetch(autocompleteURL + `?degree=${searchTerm}`)
-                    .then(res => res.json());
-
-                if (degrees.length > 0) {
-
-                    degrees.map(degree => {
-                        let div = document.createElement('div');
-                        div.innerHTML = `<h2>${degree.degree}</h2><hr>`;
-                        div.addEventListener("click", () => fillRecruitDegree(degree.degree));
-                        autoDisplay.appendChild(div);
-                    });
-                }
-
-            } catch (error) {
-                console.log("Whoopsie!", error);
-            }
-
-        }
-
-        function fillRecruitDegree(degree) {
-
-            search.value = degree;    // fill the searchbar with selected title
-            autoDisplay.innerHTML = '';
-            searchRecruits("degree");        // call the searchMovies function
-        }
-
-        function buildHighlights(highlights) {
-
-            let highlightString = "";
-
-            highlights.forEach(highlight => {
-
-                let texts = highlight.texts;
-                texts.forEach(text => {
-                    if (text.type === 'hit')
-                        highlightString += `<span style="color:red"> ${text.value} </span>`
-                    else highlightString += text.value
-                });
-            });
-
-            return highlightString;
-        }
+        search.addEventListener('input', searchAutocomplete);
 
     </script>
 </body>
