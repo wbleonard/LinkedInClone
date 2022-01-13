@@ -34,12 +34,13 @@ async function searchRecruits() {
             const name = recruit.name;
             const university = recruit.university.school_name;
             const degree = recruit.university.degree;
-            //const degreeWithHighlights = buildHighlights(recruit.university.degree);
+            const degreeWithHighlights = buildHighlights("university.degree", recruit.university.degree, recruit.highlights);
             const gpa = Object.values(recruit.university.gpa);
             const job = recruit.job;
             const notes = recruit.notes;
             const score = Object.values(recruit.score).toString().slice(0, 5);
-            const notesWithHighlights = buildHighlights(recruit.highlights);
+            const jobWithHighlights = buildHighlights("job", recruit.job, recruit.highlights);
+            const notesWithHighlights = buildHighlights("notes", recruit.notes, recruit.highlights);
 
 
             text += ` 
@@ -48,9 +49,9 @@ async function searchRecruits() {
                             <b><h3>${name}</h3></b>
                             <h5><span class="color-gray">Score:</span> ${score} </h5>
                             <h5><span class="color-gray">University:</span> ${university}</h5>
-                            <h5><span class="color-gray">Degree:</span> ${degree}</h5>
+                            <h5><span class="color-gray">Degree:</span> ${degreeWithHighlights}</h5>
                             <h5><span class="color-gray">GPA:</span> ${gpa}</h5>
-                            <h5><span class="color-gray">Job:</span> ${job}</h5>
+                            <h5><span class="color-gray">Job:</span> ${jobWithHighlights}</h5>
                             <h5><span class="color-gray">Notes:</span> ${notesWithHighlights}</h5>
                         </div>
                     </div>
@@ -64,10 +65,76 @@ async function searchRecruits() {
 }
 
 
+
+function buildHighlights(field, value, highlights) {
+
+    console.log(`highlighting field: ${field}`);
+    console.log(`field value: ${value}`);
+    console.log(`Number of highlights: ${highlights.length}`);
+
+    let result = value;
+
+    var highlightsExist = fieldHasHighlights(field, highlights);
+
+    if (highlightsExist) {
+        let highlight = getHighlight(field, highlights);
+
+        result = highlightText(highlight);
+    }
+
+    return result;
+}
+
+function fieldHasHighlights(field, highlights) {
+
+    let result = false;
+
+    highlights.forEach(highlight => {
+
+        if (highlight.path === field) {
+            result = true;
+        }
+    });
+
+    return result;
+}
+
+/*  
+ * TODO: Support multiple highlights for a single field. 
+ */
+function getHighlight(field, highlights) {
+
+    let result = {};
+
+    highlights.forEach(highlight => {
+
+        if (highlight.path === field) {
+            result = highlight;            
+        }
+    });
+
+    return result;
+}
+
+function highlightText(highlight) {
+
+    let highlightString = "";
+
+    let texts = highlight.texts;
+
+    texts.forEach(text => {
+        if (text.type === 'hit')
+            highlightString += `<span style="color:red"> ${text.value} </span>`
+        else highlightString += text.value
+    });
+
+    return highlightString;
+}
+
 async function searchAutocomplete() {
 
     /*close any already open lists of autocompleted values*/
-    closeAllLists();
+    await closeAllLists();
 
     resultDisplay.innerHTML = '';
     autoDisplay.innerHTML = '';
@@ -108,32 +175,20 @@ function fillRecruit(term) {
     searchRecruits();        // call the searchRecruits function
 }
 
-function closeAllLists(elmnt) {
+async function closeAllLists(elmnt) {
     /*close all autocomplete lists in the document,
     except the one passed as an argument:*/
     console.log("Closing List")
     var x = document.getElementsByClassName("autocomplete-items");
-    for (var i = 0; i < x.length; i++) {
+    var childNodes = x[0].childNodes;
+    for (var i = 0; i < childNodes.length; i++) {
         console.log("elements: " + i);
-        if (elmnt != x[i] && elmnt != search) {
-            //x[i].parentNode.removeChild(x[i]);
+        if (elmnt != childNodes[i] && elmnt != search) {
+            childNodes[i].parentNode.removeChild(childNodes[i]);
+            //x.removeChild(x[i]);
+
         }
     }
 }
 
-function buildHighlights(highlights) {
 
-    let highlightString = "";
-
-    highlights.forEach(highlight => {
-
-        let texts = highlight.texts;
-        texts.forEach(text => {
-            if (text.type === 'hit')
-                highlightString += `<span style="color:red"> ${text.value} </span>`
-            else highlightString += text.value
-        });
-    });
-
-    return highlightString;
-}
